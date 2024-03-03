@@ -61,6 +61,19 @@ async def insert_record(comment_id: int, campaign_id: int, description: str, sen
     db.close()
     return {"message": "Record inserted successfully"}
 
+@app.delete("/delete")
+async def delete_record(comment_id: int):
+    db = SessionLocal()
+    db_record = db.query(SentimentAnalysis).filter(SentimentAnalysis.comment_id == comment_id).first()
+    if db_record:
+        db.delete(db_record)
+        db.commit()
+        db.close()
+        return {"message": "Record deleted successfully"}
+    else:
+        db.close()
+        raise HTTPException(status_code=404, detail="Record not found")
+
 
 if __name__ == "__main__":
     import uvicorn
