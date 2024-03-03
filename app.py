@@ -51,6 +51,17 @@ async def predict_sentiment(sentiment_input: SentimentInput):
     sentiment = Get_sentiment()
     return {"sentiment": sentiment}
 
+@app.post("/insert")
+async def insert_record(comment_id: int, campaign_id: int, description: str, sentiment: str):
+    db = SessionLocal()
+    db_record = SentimentAnalysis(comment_id=comment_id, campaign_id=campaign_id, description=description, sentiment=sentiment)
+    db.add(db_record)
+    db.commit()
+    db.refresh(db_record)
+    db.close()
+    return {"message": "Record inserted successfully"}
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
