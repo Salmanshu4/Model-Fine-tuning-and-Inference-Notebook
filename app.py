@@ -48,7 +48,7 @@ class SentimentOutput(BaseModel):
 # API endpoints
 @app.post("/predict", response_model=SentimentOutput)
 async def predict_sentiment(sentiment_input: SentimentInput):
-    sentiment = Get_sentiment()
+    sentiment = Get_sentiment(sentiment_input, Tokenizer, Model)
     return {"sentiment": sentiment}
 
 @app.post("/insert")
@@ -73,7 +73,34 @@ async def delete_record(comment_id: int):
     else:
         db.close()
         raise HTTPException(status_code=404, detail="Record not found")
+    
+@app.put("/update")
+async def update_record(comment_id: int, campaign_id: int, description: str, sentiment: str):
+    db = SessionLocal()
+    db_record = db.query(SentimentAnalysis).filter(SentimentAnalysis.comment_id == comment_id).first()
+    if db_record:
+        db_record.campaign_id = campaign_id
+        db_record.description = description
+        db_record.sentiment = sentiment
+        db.commit()
+        db.close()
+        return {"message": "Record updated successfully"}
+    else:
+        db.close()
+        raise HTTPException(status_code=404, detail="Record not found")
 
+@app.post("/bulk_insert")
+async def bulk_insert(file: UploadFile = File(...)):
+    contents = await file.read()
+    df = pd.read_csv(contents)
+    db = SessionLocal()
+    for _, row in df.iterrows():
+        sentiment = Get_sentiment(row['description'], Tokenizer, Model)
+        db_record = SentimentAnalysis(comment_id=row['comment_id'], campaign_id=row['campaign_id'], description=row['description'], sentiment=sentiment)
+        db.add(db_record)
+    db.commit()
+    db.close()
+    return {"message": "Bulk insertion successful"}
 
 if __name__ == "__main__":
     import uvicorn
