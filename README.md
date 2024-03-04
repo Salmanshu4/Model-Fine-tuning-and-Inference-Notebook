@@ -7,6 +7,8 @@ uvicorn main:app --reload
 
 
 The API will be available at http://localhost:8000.
+Interactive API docs¶
+Now go to http://127.0.0.1:8000/docs.
 
 ## Usage
 
