@@ -1,5 +1,10 @@
 # Model-Fine-tuning-and-Inference-Notebook
 
+## Setup
+
+Clone the repository:
+https://github.com/Salmanshu4/Model-Fine-tuning-and-Inference-Notebook.git   
+
 ## Install the dependencies:
 pip install -r requirements.txt
 ##  Run the FastAPI server:
