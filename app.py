@@ -6,7 +6,7 @@ from pydantic import BaseModel
 import pandas as pd
 import torch
 from model import Get_sentiment
-from transformers import BertTokenizer, TFBertForSequenceClassification
+from transformers import BertTokenizer, BertForSequenceClassification
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -17,7 +17,7 @@ path = '/Users/genericname/Desktop/Dev/sentiment/'
 bert_tokenizer = BertTokenizer.from_pretrained(path +'/Tokenizer')
  
 # Load model
-bert_model = TFBertForSequenceClassification.from_pretrained(path +'/Model')
+bert_model = BertForSequenceClassification.from_pretrained(path +'/Model')
 # Define SQLAlchemy database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sentiment_analysis.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
